@@ -1,0 +1,4 @@
+name: WoodenSwordHelper
+version: 1.0.0
+main: net.tropolia.woodensword.WoodenSwordHelper
+api-version: '1.21'
