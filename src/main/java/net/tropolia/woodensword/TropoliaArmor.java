@@ -1,4 +1,4 @@
-```java
+java
 package net.tropolia.woodensword;
 
 import org.bukkit.Bukkit;
@@ -116,4 +116,4 @@ public final class TropoliaArmor extends JavaPlugin implements Listener {
         }
     }
 }
-```
+
