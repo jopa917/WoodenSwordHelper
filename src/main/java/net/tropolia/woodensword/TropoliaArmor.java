@@ -1,4 +1,4 @@
-java
+
 package net.tropolia.woodensword;
 
 import org.bukkit.Bukkit;
