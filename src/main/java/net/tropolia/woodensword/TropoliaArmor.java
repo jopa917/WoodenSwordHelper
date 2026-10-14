@@ -107,25 +107,29 @@ public final class TropoliaArmor extends JavaPlugin implements Listener {
         }
     }
 
-    private Color getTeamColor(String team) {
-        String name = team.toLowerCase(Locale.ROOT)
-                .replace("_", "").replace(" ", "");
 
-        switch (name) {
-            case "blue": return Color.BLUE;
-            case "aqua": return Color.AQUA;
-            case "yellow": return Color.YELLOW;
-            case "lime": return Color.LIME;
-            case "pink": return Color.FUCHSIA;
-            case "white": return Color.WHITE;
-            case "red": return Color.RED;
-            case "lightgray":
-            case "lightgrey": return Color.SILVER;
-            case "green": return Color.GREEN;
-            case "orange": return Color.ORANGE;
-            case "purple": return Color.PURPLE;
-            default: return null;
-        }
+private Color getTeamColor(String team) {
+    String name = team.toLowerCase(Locale.ROOT)
+            .replace("_", "")
+            .replace(" ", "");
+
+    switch (name) {
+        case "blue": return Color.BLUE;
+        case "aqua": return Color.AQUA;
+        case "yellow": return Color.YELLOW;
+        case "pink": return Color.FUCHSIA;
+        case "white": return Color.WHITE;
+        case "red": return Color.RED;
+        case "gray":
+        case "grey":
+        case "lightgray":
+        case "lightgrey": return Color.GRAY;
+        case "green": return Color.GREEN;
+        default: return null;
     }
 }
+}    
+        
+    
+
 
