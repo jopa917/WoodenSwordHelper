@@ -36,6 +36,6 @@ tasks.register('tropoliaArmorJar', Jar) {
     }
 
     from('src/tropoliaArmor/resources/plugin.yml') {
-        into ''
+        rename { 'plugin.yml' }
     }
 }
