@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,20 +21,21 @@ public final class TropoliaArmor extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        if (Bukkit.getPluginManager().getPlugin("BedWars1058") == null) {
-            getLogger().severe("BedWars1058 not found!");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-
         Bukkit.getPluginManager().registerEvents(this, this);
         getLogger().info("TropoliaArmor enabled!");
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent event) {
-        Player player = event.getPlayer();
+        scheduleArmor(event.getPlayer());
+    }
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        scheduleArmor(event.getPlayer());
+    }
+
+    private void scheduleArmor(Player player) {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             if (player.isOnline()) {
                 equipTeamArmor(player);
@@ -43,23 +45,25 @@ public final class TropoliaArmor extends JavaPlugin implements Listener {
 
     private void equipTeamArmor(Player player) {
         String team = getTeamName(player);
-
-        if (team == null || team.isEmpty()) {
-            return;
-        }
+        if (team == null) return;
 
         Color color = getTeamColor(team);
-        if (color == null) {
+        if (color == null) return;
+
+        setLeatherIfEmpty(player, 0, Material.LEATHER_BOOTS, color);
+        setLeatherIfEmpty(player, 1, Material.LEATHER_LEGGINGS, color);
+        setLeatherIfEmpty(player, 2, Material.LEATHER_CHESTPLATE, color);
+        setLeatherIfEmpty(player, 3, Material.LEATHER_HELMET, color);
+    }
+
+    private void setLeatherIfEmpty(Player player, int slot,
+                                   Material material, Color color) {
+        ItemStack current = player.getInventory().getArmorContents()[slot];
+
+        if (current != null && current.getType() != Material.AIR) {
             return;
         }
 
-        player.getInventory().setHelmet(makeArmor(Material.LEATHER_HELMET, color));
-        player.getInventory().setChestplate(makeArmor(Material.LEATHER_CHESTPLATE, color));
-        player.getInventory().setLeggings(makeArmor(Material.LEATHER_LEGGINGS, color));
-        player.getInventory().setBoots(makeArmor(Material.LEATHER_BOOTS, color));
-    }
-
-    private ItemStack makeArmor(Material material, Color color) {
         ItemStack item = new ItemStack(material);
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
 
@@ -68,39 +72,44 @@ public final class TropoliaArmor extends JavaPlugin implements Listener {
             item.setItemMeta(meta);
         }
 
-        return item;
+        switch (slot) {
+            case 0: player.getInventory().setBoots(item); break;
+            case 1: player.getInventory().setLeggings(item); break;
+            case 2: player.getInventory().setChestplate(item); break;
+            case 3: player.getInventory().setHelmet(item); break;
+        }
     }
 
     private String getTeamName(Player player) {
         try {
             Class<?> api = Class.forName("com.andrei1058.bedwars.api.BedWars");
-            Method getApi = api.getMethod("getAPI");
-            Object apiInstance = getApi.invoke(null);
-
-            Method getArenaUtil = apiInstance.getClass().getMethod("getArenaUtil");
-            Object arenaUtil = getArenaUtil.invoke(apiInstance);
-
-            Method getArena = arenaUtil.getClass().getMethod("getArenaByPlayer", Player.class);
-            Object arena = getArena.invoke(arenaUtil, player);
+            Object apiInstance = api.getMethod("getAPI").invoke(null);
+            Object arenaUtil = apiInstance.getClass()
+                    .getMethod("getArenaUtil").invoke(apiInstance);
+            Object arena = arenaUtil.getClass()
+                    .getMethod("getArenaByPlayer", Player.class)
+                    .invoke(arenaUtil, player);
 
             if (arena == null) return null;
 
-            Method getTeam = arena.getClass().getMethod("getTeam", Player.class);
-            Object team = getTeam.invoke(arena, player);
+            Object team = arena.getClass()
+                    .getMethod("getTeam", Player.class).invoke(arena, player);
 
             if (team == null) return null;
 
-            Method getName = team.getClass().getMethod("getName");
-            Object name = getName.invoke(team);
-
+            Object name = team.getClass().getMethod("getName").invoke(team);
             return name == null ? null : name.toString();
+
         } catch (Exception e) {
+            getLogger().fine("Could not determine team for " + player.getName()
+                    + ": " + e.getMessage());
             return null;
         }
     }
 
     private Color getTeamColor(String team) {
-        String name = team.toLowerCase(Locale.ROOT).replace("_", "").replace(" ", "");
+        String name = team.toLowerCase(Locale.ROOT)
+                .replace("_", "").replace(" ", "");
 
         switch (name) {
             case "blue": return Color.BLUE;
@@ -112,6 +121,9 @@ public final class TropoliaArmor extends JavaPlugin implements Listener {
             case "red": return Color.RED;
             case "lightgray":
             case "lightgrey": return Color.SILVER;
+            case "green": return Color.GREEN;
+            case "orange": return Color.ORANGE;
+            case "purple": return Color.PURPLE;
             default: return null;
         }
     }
