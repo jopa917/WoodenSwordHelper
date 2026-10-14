@@ -1,4 +1,4 @@
-gradle
+
 plugins {
     id 'java'
 }
