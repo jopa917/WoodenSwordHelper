@@ -1,4 +1,5 @@
-name: Build WoodenSwordHelper
+name: Build WoodenSwordHelper and TropoliaArmor
+
 'on':
   push:
     branches:
@@ -24,11 +25,12 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build plugin
-        run: gradle build
+      - name: Build plugins
+        run: gradle build tropoliaArmorJar
 
-      - name: Upload plugin JAR
+      - name: Upload plugin JARs
         uses: actions/upload-artifact@v4
         with:
-          name: WoodenSwordHelper
+          name: Tropolia-Plugins
           path: build/libs/*.jar
+          if-no-files-found: error
