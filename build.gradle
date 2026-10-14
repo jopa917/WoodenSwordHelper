@@ -35,7 +35,7 @@ tasks.register('tropoliaArmorJar', Jar) {
         include 'net/tropolia/woodensword/TropoliaArmor$*.class'
     }
 
-    from('src/tropoliaArmor/resources/plugin.yml') 
+    from('src/tropoliaArmor/resources') {
+        include '**/plugin.yml'
     }
 }
-
