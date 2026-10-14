@@ -1,4 +1,4 @@
-```gradle
+gradle
 plugins {
     id 'java'
 }
@@ -36,4 +36,4 @@ tasks.register('tropoliaArmorJar', Jar) {
     include 'net/tropolia/woodensword/TropoliaArmor$*.class'
     include 'plugin.yml'
 }
-```
+
