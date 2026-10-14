@@ -19,12 +19,19 @@ import java.util.Locale;
 
 public final class TropoliaArmor extends JavaPlugin implements Listener {
 
-    @Override
-    public void onEnable() {
-        Bukkit.getPluginManager().registerEvents(this, this);
-        getLogger().info("TropoliaArmor enabled!");
-    }
+    
+@Override
+public void onEnable() {
+    Bukkit.getPluginManager().registerEvents(this, this);
 
+    Bukkit.getScheduler().runTaskTimer(this, () -> {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            equipTeamArmor(player);
+        }
+    }, 20L, 20L);
+
+    getLogger().info("TropoliaArmor enabled!");
+}
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent event) {
         scheduleArmor(event.getPlayer());
