@@ -35,17 +35,15 @@ tasks.register('tropoliaArmorJar', Jar) {
         include 'net/tropolia/woodensword/TropoliaArmor$*.class'
     }
 
+    from('src/tropoliaArmor/resources/plugin.yml') {
+        rename { 'plugin.yml' }
+        into ''
+    }
+
     doFirst {
         def descriptor = file('src/tropoliaArmor/resources/plugin.yml')
         if (!descriptor.exists()) {
             throw new GradleException("Missing TropoliaArmor plugin.yml: ${descriptor}")
         }
-        from(descriptor) {
-            into ''
-        }
-    }
-}
-    from('src/tropoliaArmor/resources/plugin.yml') {
-        rename { 'plugin.yml' }
     }
 }
